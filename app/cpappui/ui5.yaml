@@ -1,4 +1,15 @@
-specVersion: "2.5"
+specVersion: "2.6"
 metadata:
   name: com.bosch.cpappui
 type: application
+builder:
+ resources:
+ excludes:
+ - /test/**
+ customTasks:
+ - name: ui5-task-zipper
+ afterTask: uglify
+ configuration:
+ archiveName: cpappui
+ additionalFiles:
+ - xs-app.json

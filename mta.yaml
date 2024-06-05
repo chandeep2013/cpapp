@@ -39,14 +39,14 @@ modules:
     build-parameters:
       build-result: resources
       requires:
-        - name: cpapp-app-feedback
+        - name: cpapp-app-cpappui
           artifacts: 
-            - feedback.zip
+            - cpappui.zip
           target-path: resources/
   
-  - name: cpapp-app-feedback
+  - name: cpapp-app-cpappui
     type: html5 
-    path: app/cpappdashboard
+    path: app/cpappui
     parameters:
       memory: 256M
       disk-quota: 256M
@@ -55,7 +55,7 @@ modules:
       builder: custom
       commands:
         - npm install
-        - 'npm run builder:cf'
+        - 'npm run build:cf'
       supported-platforms: []
 
   - name: cpapp-approuter
