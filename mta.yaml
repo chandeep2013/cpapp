@@ -1,0 +1,134 @@
+_schema-version: '3.1'
+ID: cpapp
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+modules:
+  - name: cpapp-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+      readiness-health-check-type: http
+      readiness-health-check-http-endpoint: /health
+    build-parameters:
+      builder: npm
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: cpapp-db
+
+  - name: cpapp-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: cpapp-db
+
+  - name: cpapp-app
+    type: com.sap.application.content
+    path: app
+    requires:
+      - name: cpapp-html5-repo-host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - name: cpapp-app-feedback
+          artifacts: 
+            - feedback.zip
+          target-path: resources/
+  
+  - name: cpapp-app-feedback
+    type: html5 
+    path: app/cpappdashboard
+    parameters:
+      memory: 256M
+      disk-quota: 256M
+    build-parameters:
+      build-result: dist 
+      builder: custom
+      commands:
+        - npm install
+        - 'npm run builder:cf'
+      supported-platforms: []
+
+  - name: cpapp-approuter
+    type: javascript.nodejs
+    path: approuter
+    deployed-after:
+      - cpapp-portal-content
+      - cpapp-srv
+    parameters:
+      disk-quota: 256M
+      memory: 128M
+      routes:
+        - route: "https://api.cf.us10-001.hana.ondemand.com"
+      host: ''
+    requires:
+      - name: cpapp-portal
+      - name: cpapp-html5-repo-host
+      - name: cpapp-uaa
+
+  - name: cpapp-portal-content
+    type: com.sap.application.content
+    path: flp
+    deployed-after:
+      - cpapp-app
+    requires:
+      - name: cpapp-portal
+        parameters:
+          content-target: true
+          service-key:
+            name: content-deploy-key
+            config: 
+              content-endpaoint: developer
+      - name: cpapp-html5-repo-host
+      - name: cpapp-uaa
+      - name: cpapp-app
+
+resources:
+  - name: cpapp-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+  - name: cpapp-logging
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: application-logs
+      service-plan: lite
+  - name: cpapp-uaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+  - name: cpapp-portal
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: portal
+      service-plan: standard
+  - name: cpapp-html5-repo-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service:  html5-apps-repo
+      service-plan: app-runtime
+  - name: cpapp-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-plan: app-host
+      service: html5-apps-repo
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm install --production
+        - npx -p @sap/cds-dk cds build --production
+ 
+

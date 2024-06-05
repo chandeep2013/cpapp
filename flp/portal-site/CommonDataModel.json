@@ -1,0 +1,106 @@
+{
+    "_version": "3.0.0",
+    "identification": {
+        "entityType": "bundle",
+        "id": "ab0cf17f-9117-4abe-8097-9e88b7fe9fc6-1576585155989"
+    },
+    "payload": {
+        "catalogs": [
+            {
+                "_version": "3.0.0",
+                "identification": {
+                    "id": "LearningCatalogs",
+                    "entityType": "catalog",
+                    "title": "Catalog"
+                },
+                "payload": {
+                    "viz": [
+                        {
+                            "vizId": "appsemobj-actiondisplay",
+                            "appId": "com.bosch.cpappui"
+                        }
+                    ]
+                }
+            }
+        ],
+        "groups": [
+            {
+                "_version": "3.0.0",
+                "identification": {
+                    "id": "LearningGroups",
+                    "entityType": "group",
+                    "title": "Learning Apps"
+                },
+                "payload": {
+                    "viz": [
+                        {
+                            "vizId": "appsemobj-actiondisplay",
+                            "appId": "com.bosch.cpappui"
+                        }
+                    ]
+                }
+            }
+        ],
+        "sites": [
+            {
+                "_version": "3.0.0",
+                "identification": {
+                    "id": "a6fcf49f-8892-4250-aead-82e1910e9099",
+                    "entityType": "site",
+                    "title": "My Apps"
+                },
+                "payload": {
+                    "config": {
+                        "ushellConfig": {
+                            "bootstrapPlugins": {
+                                "KeyUserPlugin": {
+                                    "component": "sap.ushell.plugins.rta",
+                                    "oAuthScopes": [
+                                        "$XSAPPNAME.KEYUSER"
+                                    ]
+                                }
+                            },
+                            "renderers": {
+                                "fiori2": {
+                                    "componentData": {
+                                        "config": {
+                                            "applications": {
+                                                "Shell-home": {}
+                                            },
+                                            "enablePersonalization": true,
+                                            "enableSetLanguage": true,
+                                            "enableSetTheme": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "groupsOrder": [
+                        "LearningGroups"
+                    ],
+                    "sap.cloud.portal": {
+                        "config": {
+                            "ui5LibraryUrl": "https://sapui5.hana.ondemand.com",
+                            "ui5VersionNumber": "1.88.0",
+                            "flexibilityServices": [
+                                {
+                                    "connector": "KeyUserConnector",
+                                    "url": "/keyuser"
+                                }
+                            ],
+                            "theme.id": "sap_fiori_3",
+                            "theme.active": [
+                                "sap_fiori_3",
+                                "sap_belize",
+                                "sap_belize_plus",
+                                "sap_belize_hcb",
+                                "sap_belize_hcw"
+                            ]
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}
